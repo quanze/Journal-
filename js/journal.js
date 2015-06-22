@@ -55,22 +55,7 @@ function Journal() {
         return foundEntries;
     }
 
-    this.formatEntriesToHtml = function formatHtml(){
-        var htmlOutput = "";
-        for (var i = 0; i < this.entries.length; i++){
-            htmlOutput += '<li class="entry">';
-            htmlOutput += '<div>' + this.entries[i].title + '</div>';
-            htmlOutput += '<div>By: ' + this.entries[i].author + '</div>';
-            htmlOutput += '<div>' + this.entries[i].content + '</div>';
-            htmlOutput += '<div>';
-            for(var k = 0; k < this.entries[i].tags.length; k++){
-                htmlOutput += '#' + this.entries[i].tags[k];
-            }
-            htmlOutput += '</div>';
-            htmlOutput += '</li>';
-         }
-    return htmlOutput;     
-}
+ 
 }
 function Entry(title, content, author, tags) {
     this.title = title;
@@ -90,6 +75,23 @@ function Entry(title, content, author, tags) {
     }
 }
 
+formatEntriesToHtml = function formatHtml(entries){
+    var htmlOutput = "";
+    for (var i = 0; i < entries.length; i++){
+        htmlOutput += '<li class="entry">';
+        htmlOutput += '<div>' + entries[i].title + '</div>';
+        htmlOutput += '<div>By: ' + entries[i].author + '</div>';
+        htmlOutput += '<div>' + entries[i].content + '</div>';
+        htmlOutput += '<div>';
+        for(var k = 0; k < entries[i].tags.length; k++){
+            htmlOutput += '#' + entries[i].tags[k];
+        }
+        htmlOutput += '</div>';
+        htmlOutput += '</li>';
+     }
+return htmlOutput;     
+}
+
 
 // TESTING CODE
 var myJournal = new Journal();
@@ -104,16 +106,14 @@ $('#formSubmit').submit(function() {
     event.preventDefault();
     var arrEntry = $('#formSubmit').serializeFormToObject();
     myJournal.addEntry(arrEntry.title,arrEntry.author,arrEntry.content,[arrEntry.tags]);
-    console.log(arrEntry);
 
     var errorMessage = "<p>Error! Missing input field!</p>";
     var isInputValid = true;
     if (arrEntry.title == "" || arrEntry.author == "" || arrEntry.content == "" || arrEntry.tags == "" ){
     	isInputValid = false;
     }
-    console.log(arrEntry);
     if (isInputValid){
-    	$('.articles-list').html(myJournal.formatEntriesToHtml());
+    	$('.articles-list').html(formatEntriesToHtml(myJournal.entries));
         myJournal.displayAllEntries();
 	}else{
 		$('#formSubmit').append(errorMessage);
@@ -123,7 +123,13 @@ $('#formSubmit').submit(function() {
 
 $('#searchTags').submit(function(){
     event.preventDefault();
-   var qwer = $('#searchTags').serializeFormToObject();
+   var tagQuery = $('#searchTags').serializeFormToObject();
+   $('.articles-list').html(formatEntriesToHtml(myJournal.findAllEntriesWithTag(tagQuery.searchTags)));
+});
+$('#searchTags').submit(function(){
+    event.preventDefault();
+   var tagQuery = $('#searchTags').serializeFormToObject();
+   $('.articles-list').html(formatEntriesToHtml(myJournal.findAllEntriesWithTag(tagQuery.searchTags)));
 });
 
 
