@@ -55,8 +55,23 @@ function Journal() {
         return foundEntries;
     }
 
+    this.formatEntriesToHtml = function formatHtml(){
+        var htmlOutput = "";
+        for (var i = 0; i < this.entries.length; i++){
+            htmlOutput += '<li class="entry">';
+            htmlOutput += '<div>' + this.entries[i].title + '</div>';
+            htmlOutput += '<div>By: ' + this.entries[i].author + '</div>';
+            htmlOutput += '<div>' + this.entries[i].content + '</div>';
+            htmlOutput += '<div>';
+            for(var k = 0; k < this.entries[i].tags.length; k++){
+                htmlOutput += '#' + this.entries[i].tags[k];
+            }
+            htmlOutput += '</div>';
+            htmlOutput += '</li>';
+         }
+    return htmlOutput;     
 }
-
+}
 function Entry(title, content, author, tags) {
     this.title = title;
     this.content = content;
@@ -75,6 +90,7 @@ function Entry(title, content, author, tags) {
     }
 }
 
+
 // TESTING CODE
 var myJournal = new Journal();
 myJournal.addEntry("First Entry", "Everything is great!", "Ben", ["Friday", "Boring"]);
@@ -87,6 +103,7 @@ $('#formSubmit').submit(function() {
     console.log('Form Submitted');
     event.preventDefault();
     var arrEntry = $('#formSubmit').serializeFormToObject();
+    myJournal.addEntry(arrEntry.title,arrEntry.author,arrEntry.content,[arrEntry.tags]);
     console.log(arrEntry);
 
     var errorMessage = "<p>Error! Missing input field!</p>";
@@ -95,9 +112,9 @@ $('#formSubmit').submit(function() {
     	isInputValid = false;
     }
     console.log(arrEntry);
-    if (true){
-    	$('.articles-list').append(stringObject(arrEntry));
-    	console.log(stringObject(arrEntry));
+    if (isInputValid){
+    	$('.articles-list').html(myJournal.formatEntriesToHtml());
+        myJournal.displayAllEntries();
 	}else{
 		$('#formSubmit').append(errorMessage);
 	}
@@ -107,35 +124,9 @@ $('#formSubmit').submit(function() {
 $('#searchTags').submit(function(){
     event.preventDefault();
    var qwer = $('#searchTags').serializeFormToObject();
-    console.log(qwer);
-
-
-
-
-    $('.articles-list').html(stringObject(myJournal.findAllEntriesWithTag('lol'))); 
 });
 
 
-console.log(myJournal.findAllEntriesWithTag('Boring'));
 
-
-var stringObject = function (arr){
-    var string = "";
-	for(var i = 0; i < arr.length; i++){
-        string += '<li class="entry">';
-    	string += ' <div>' + arr[i].title + '</div>';
-    	string += ' <div>By: ' + arr[i].author + '</div>';
-    	string += ' <div>' + arr[i].content + '</div>';
-    	string += ' <div>' + arr[i].tags + '</div>';
-        string += '</li>';
-        console.log('in loop');
-    	
-    };
-console.log(string);
-        return string;
-
-}
-
-console.log(stringObject(myJournal.findAllEntriesWithTag('Boring')));
 
 
